@@ -64,7 +64,7 @@
 #endif
 
 #define	_ENTRY(x, regs) \
-	.text; _ALIGN_TEXT; .globl x; .type x@function; x: .word regs
+	.text; _ALIGN_TEXT; .globl x; .type x,@function; x: .word regs
 
 #ifdef GPROF
 # define _PROF_PROLOGUE	\
