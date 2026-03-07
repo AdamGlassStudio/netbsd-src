@@ -14,7 +14,7 @@ SUBDIR=	adventure arithmetic atc \
 	hack hals_end hangman hunt larn mille monop morse number \
 	phantasia pig pom ppt primes quiz \
 	rain random robots rogue sail snake testpat tetris trek \
-	wargames warp worm worms wtf wump
+	wargames worm worms wtf wump
 
 .if ${MKCXX} != "no"
 SUBDIR+=	dab 
