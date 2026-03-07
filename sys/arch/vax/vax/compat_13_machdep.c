@@ -191,7 +191,7 @@ setupstack_oldsigcontext(const struct ksiginfo *ksi, const sigset_t *mask,
 	mutex_exit(p->p_lock);
 
 	/* Point stack pointer at pc in trampoline.  */
-	sp =- 8;
+	sp -= 8;
 
 	error = copyout(&tramp, (char *)tramp.scp - sizeof(tramp), sizeof(tramp)) != 0 ||
 	    copyout(&sigctx, (void *)tramp.scp, sizeof(sigctx)) != 0;
