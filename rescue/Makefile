@@ -21,6 +21,12 @@ CRUNCHGEN_FLAGS+=-V LDSTATIC="-static -pie"
 CRUNCHGEN_FLAGS+=-V LDSTATIC="-static" -V NOPIE=
 .endif
 
+# VAX GNU ld chokes on .eh_frame_hdr with overlapping FDEs in large
+# static binaries.  Suppress it until the linker is fixed or replaced.
+.if ${MACHINE} == "vax"
+CRUNCHGEN_FLAGS+=-V LDFLAGS="-Wl,--no-eh-frame-hdr"
+.endif
+
 CRUNCHGEN_FLAGS+=-V NOLIBCSANITIZER= -V NOSANITIZER= -V NOMAN=
 
 RESCUEDIR=	/rescue
