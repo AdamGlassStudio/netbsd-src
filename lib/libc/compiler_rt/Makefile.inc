@@ -130,6 +130,17 @@ GENERIC_SRCS+=	\
 .  endif
 .endif # IEEE 754 only machines
 
+# VAX-specific FP conversion builtins (cannot use generic IEEE versions)
+.if ${LIBC_MACHINE_ARCH} == "vax"
+GENERIC_SRCS+= \
+	emutls.c \
+	floatdidf.c \
+	floatdisf.c \
+	floatundidf.c \
+	floatundisf.c
+.PATH: ${COMPILER_RT_SRCDIR}/lib/builtins/vax
+.endif
+
 .if ${LIBC_MACHINE_ARCH} != "m68k"
 GENERIC_SRCS+= \
 	fixxfdi.c

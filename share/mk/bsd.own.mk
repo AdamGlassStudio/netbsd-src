@@ -245,6 +245,7 @@ _LIBC_COMPILER_RT.powerpc=	yes
 _LIBC_COMPILER_RT.powerpc64=	yes
 _LIBC_COMPILER_RT.sparc=	yes
 _LIBC_COMPILER_RT.sparc64=	yes
+_LIBC_COMPILER_RT.vax=		yes
 _LIBC_COMPILER_RT.x86_64=	yes
 
 .if ${HAVE_LLVM:Uno} == "yes" && ${_LIBC_COMPILER_RT.${MACHINE_ARCH}:Uno} == "yes"
