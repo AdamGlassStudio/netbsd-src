@@ -96,7 +96,11 @@ CWARNFLAGS+=	-Wno-sign-compare
 
 CWARNFLAGS.clang+=	-Wno-unknown-pragmas -Wno-conversion \
 			-Wno-self-assign -Wno-error=address-of-packed-member \
-			-Wno-error=constant-conversion
+			-Wno-error=constant-conversion \
+			-Wno-error=format-security \
+			-Wno-error=unused-function \
+			-Wno-error=null-dereference \
+			-Wno-error=unused-command-line-argument
 CWARNFLAGS.gcc+=	${GCC_NO_ADDR_OF_PACKED_MEMBER}
 
 CWARNFLAGS.ah_regdomain.c= ${${ACTIVE_CC} == "clang":? \
@@ -105,9 +109,19 @@ CWARNFLAGS.ah_regdomain.c= ${${ACTIVE_CC} == "clang":? \
 CWARNFLAGS.ioconf.c= ${${ACTIVE_CC} == "clang":? -Wno-unused-const-variable :}
 
 CFLAGS+=	-ffreestanding -fno-zero-initialized-in-bss
-CFLAGS+=	${${ACTIVE_CC} == "gcc":? -fno-delete-null-pointer-checks :}
+CFLAGS+=	-fno-delete-null-pointer-checks
 CFLAGS+=	${DEBUG} ${COPTS}
 AFLAGS+=	-D_LOCORE -Wa,--fatal-warnings
+
+# VAX + Clang: use external assembler, suppress linker/stack protector issues
+.if ${MACHINE_ARCH} == "vax" && ${ACTIVE_CC} == "clang"
+CFLAGS+=	-fno-integrated-as
+AFLAGS+=	-fno-integrated-as
+CFLAGS+=	-fno-stack-protector
+.endif
+.if ${MACHINE_ARCH} == "vax"
+LDFLAGS+=	-Wl,--no-fatal-warnings
+.endif
 
 # example usage to find largest stack users in kernel compile directory:
 #    find . -name \*.su | xargs awk '{ printf "%6d %s\n", $2, $1 }' | sort -n
