@@ -95,6 +95,22 @@ LDFLAGS+=	-Wl,--fatal-warnings
 
 LDFLAGS+=	-Wl,--warn-shared-textrel
 
+# VAX + Clang: use external assembler (GAS) because Clang's integrated
+# assembler doesn't support NetBSD's .type syntax without comma.
+.if ${MACHINE_ARCH} == "vax" && ${ACTIVE_CC} == "clang"
+CFLAGS+=	-fno-integrated-as
+AFLAGS+=	-fno-integrated-as
+.endif
+
+# VAX: suppress fatal linker warnings and eh-frame-hdr — VAX has no
+# GOT/PLT support, so shared libraries have text relocations.  This
+# must apply regardless of ACTIVE_CC because GCC-compiled libraries
+# (e.g. libobjc) still link against a Clang-built destdir (crtbeginS.o).
+.if ${MACHINE_ARCH} == "vax"
+LDFLAGS+=	-Wl,--no-fatal-warnings
+LDFLAGS+=	-Wl,--no-eh-frame-hdr
+.endif
+
 .if ${WARNS} > 1
 CFLAGS+=	-Wreturn-type -Wswitch -Wshadow
 .endif
@@ -160,6 +176,33 @@ LIBCSANITIZERFLAGS=	# empty
 
 CWARNFLAGS+=	${CWARNFLAGS.${ACTIVE_CC}}
 
+# Clang is stricter than GCC in many areas. Suppress warnings that the
+# NetBSD tree triggers with -Werror under Clang but not GCC.
+.if ${ACTIVE_CC} == "clang"
+CWARNFLAGS.clang+=	-Wno-unknown-warning-option
+CWARNFLAGS.clang+=	-Wno-error=unused-command-line-argument
+CWARNFLAGS.clang+=	-Wno-error=macro-redefined
+CWARNFLAGS.clang+=	-Wno-error=null-pointer-subtraction
+CWARNFLAGS.clang+=	-Wno-error=unterminated-string-initialization
+CWARNFLAGS.clang+=	-Wno-error=uninitialized
+CWARNFLAGS.clang+=	-Wno-error=unused-but-set-variable
+CWARNFLAGS.clang+=	-Wno-error=unsupported-floating-point-opt
+CWARNFLAGS.clang+=	-Wno-error=atomic-alignment
+CWARNFLAGS.clang+=	-Wno-error=deprecated-non-prototype
+CWARNFLAGS.clang+=	-Wno-error=cast-function-type-mismatch
+CWARNFLAGS.clang+=	-Wno-error=strict-prototypes
+CWARNFLAGS.clang+=	-Wno-error=alloc-size
+CWARNFLAGS.clang+=	-Wno-error=array-parameter
+CWARNFLAGS.clang+=	-Wno-error=missing-format-attribute
+CWARNFLAGS.clang+=	-Wno-error=tautological-compare
+CWARNFLAGS.clang+=	-Wno-error=default-const-init-var-unsafe
+CWARNFLAGS.clang+=	-Wno-error=format-truncation
+CWARNFLAGS.clang+=	-Wno-error=vla-cxx-extension
+CWARNFLAGS.clang+=	-Wno-error=array-compare
+CWARNFLAGS.clang+=	-Wno-error=incompatible-pointer-types
+CWARNFLAGS.clang+=	-Wno-error=fortify-source
+.endif
+
 CPPFLAGS+=	${AUDIT:D-D__AUDIT__}
 _NOWERROR=	${defined(NOGCCERROR) || (${ACTIVE_CC} == "clang" && defined(NOCLANGERROR)):?yes:no}
 CFLAGS+=	${${_NOWERROR} == "no" :?-Werror:} ${CWARNFLAGS}
@@ -186,6 +229,12 @@ COPTS+=	-fstack-protector -Wstack-protector
        ${MACHINE_CPU} == "m68k" || \
        ${MACHINE_CPU} == "or1k" )
 COPTS+=	-Wno-error=stack-protector 
+.	endif
+
+# VAX + Clang: stack protector is not yet supported (no TLS for
+# __stack_chk_guard), disable entirely.
+.	if "${ACTIVE_CC}" == "clang" && ${MACHINE_ARCH} == "vax"
+COPTS+=	-fno-stack-protector
 .	endif
 
 COPTS+=	${${ACTIVE_CC} == "clang":? --param ssp-buffer-size=1 :}
