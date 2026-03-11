@@ -104,12 +104,6 @@ LDFLAGS+=	-Wl,--no-fatal-warnings
 LDFLAGS+=	-Wl,--no-eh-frame-hdr
 .endif
 
-# VAX + Clang: use external assembler for .S files — the integrated
-# assembler does not yet support GAS jXX branch-relaxation pseudos.
-.if ${MACHINE_ARCH} == "vax" && defined(HAVE_LLVM)
-AFLAGS+=	-fno-integrated-as
-.endif
-
 .if ${WARNS} > 1
 CFLAGS+=	-Wreturn-type -Wswitch -Wshadow
 .endif
