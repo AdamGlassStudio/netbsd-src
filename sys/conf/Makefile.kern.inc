@@ -112,12 +112,11 @@ CFLAGS+=	-ffreestanding -fno-zero-initialized-in-bss
 CFLAGS+=	-fno-delete-null-pointer-checks
 CFLAGS+=	${DEBUG} ${COPTS}
 AFLAGS+=	-D_LOCORE -Wa,--fatal-warnings
-
-# VAX + Clang: use external assembler, suppress linker/stack protector issues
+# VAX + Clang: suppress stack protector (no canary support); use GAS for
+# hand-written .S files (IAS lacks branch relaxation — see emulate.S).
 .if ${MACHINE_ARCH} == "vax" && ${ACTIVE_CC} == "clang"
-CFLAGS+=	-fno-integrated-as
-AFLAGS+=	-fno-integrated-as
 CFLAGS+=	-fno-stack-protector
+AFLAGS+=	-fno-integrated-as
 .endif
 .if ${MACHINE_ARCH} == "vax"
 LDFLAGS+=	-Wl,--no-fatal-warnings

@@ -95,13 +95,6 @@ LDFLAGS+=	-Wl,--fatal-warnings
 
 LDFLAGS+=	-Wl,--warn-shared-textrel
 
-# VAX + Clang: use external assembler (GAS) because Clang's integrated
-# assembler doesn't support NetBSD's .type syntax without comma.
-.if ${MACHINE_ARCH} == "vax" && ${ACTIVE_CC} == "clang"
-CFLAGS+=	-fno-integrated-as
-AFLAGS+=	-fno-integrated-as
-.endif
-
 # VAX: suppress fatal linker warnings and eh-frame-hdr — VAX has no
 # GOT/PLT support, so shared libraries have text relocations.  This
 # must apply regardless of ACTIVE_CC because GCC-compiled libraries
@@ -109,6 +102,12 @@ AFLAGS+=	-fno-integrated-as
 .if ${MACHINE_ARCH} == "vax"
 LDFLAGS+=	-Wl,--no-fatal-warnings
 LDFLAGS+=	-Wl,--no-eh-frame-hdr
+.endif
+
+# VAX + Clang: use external assembler for .S files — the integrated
+# assembler does not yet support GAS jXX branch-relaxation pseudos.
+.if ${MACHINE_ARCH} == "vax" && defined(HAVE_LLVM)
+AFLAGS+=	-fno-integrated-as
 .endif
 
 .if ${WARNS} > 1
