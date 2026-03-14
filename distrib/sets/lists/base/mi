@@ -2560,6 +2560,7 @@
 ./usr/share/games/fortune			base-games-share
 ./usr/share/games/larn				base-games-share
 ./usr/share/games/quiz.db			base-games-share
+./usr/share/games/warp				base-games-share
 ./usr/share/gdb					base-util-share
 ./usr/share/gdb/syscalls			base-util-share
 ./usr/share/gnats				base-gnats-share
@@ -6361,6 +6362,7 @@
 ./var/games/larn				base-games-root
 ./var/games/phantasia				base-games-root
 ./var/games/sail				base-games-root
+./var/games/warp				base-games-root
 ./var/games/save				base-obsolete		obsolete
 ./var/heimdal					base-krb5-root
 ./var/lock					base-obsolete		obsolete
