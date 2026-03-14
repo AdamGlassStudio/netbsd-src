@@ -145,20 +145,26 @@ Xmain(void)
 		       0, hdr.aout.a_bss);
 	} else if (memcmp(hdr.elf.e_ident, ELFMAG, SELFMAG) == 0) {
 		Elf32_Phdr ph;
+		int i, nph;
 		size_t off = sizeof(hdr.elf);
 		vax_load_failure += 2;
 		read(io, (char *)&hdr.elf + sizeof(hdr.aout),
 		     sizeof(hdr.elf) - sizeof(hdr.aout));
 		if (hdr.elf.e_machine != EM_VAX || hdr.elf.e_type != ET_EXEC
-		    || hdr.elf.e_phnum != 1)
+		    || hdr.elf.e_phnum < 1)
 			goto die;
 		vax_load_failure++;
 		entry = hdr.elf.e_entry;
 		if (hdr.elf.e_phoff != sizeof(hdr.elf))
 			goto die;
 		vax_load_failure++;
-		read(io, &ph, sizeof(ph));
-		off += sizeof(ph);
+		nph = hdr.elf.e_phnum;
+		for (i = 0; i < nph; i++) {
+			read(io, &ph, sizeof(ph));
+			off += sizeof(ph);
+			if (ph.p_type == PT_LOAD)
+				break;
+		}
 		if (ph.p_type != PT_LOAD)
 			goto die;
 		vax_load_failure++;
