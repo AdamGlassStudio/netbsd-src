@@ -12,6 +12,7 @@
 ./usr/mdec/rdboot				base-sysutil-bin
 ./usr/mdec/sdboot				base-sysutil-bin
 ./usr/mdec/xxboot				base-sysutil-bin
+./usr/mdec/xxboot_cd9660			base-sysutil-bin
 ./usr/mdec/xxboot_ustarfs			base-sysutil-bin
 ./usr/share/sysinst/catalog/sysinstmsgs.de	base-util-share
 ./usr/share/sysinst/catalog/sysinstmsgs.es	base-util-share
