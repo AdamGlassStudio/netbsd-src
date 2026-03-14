@@ -16,7 +16,7 @@ image_md_pre:
 	${RM} -f cdrom/boot
 	${INSTALL} ${COPY} -m 0444 ${DESTDIR}/usr/mdec/boot cdrom/boot
 	${RM} -f bootxx.${MACHINE}
-	${INSTALL} ${COPY} -m 0444 ${DESTDIR}/usr/mdec/xxboot bootxx.${MACHINE}
+	${INSTALL} ${COPY} -m 0444 ${DESTDIR}/usr/mdec/xxboot_cd9660 bootxx.${MACHINE}
 	${RM} -f cdrom/etc/gettytab cdrom/etc/ttys cdrom/etc/rc
 	${HOST_LN} -fs /tmp/gettytab cdrom/etc/gettytab
 	${INSTALL} ${COPY} ${.CURDIR}/etc.ttys cdrom/etc/ttys
