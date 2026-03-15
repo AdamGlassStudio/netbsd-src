@@ -89,11 +89,12 @@ _rtld_relocate_nonplt_objects(Obj_Entry *obj)
 	for (rela = obj->rela; rela < obj->relalim; rela++) {
 		Elf_Addr        *where;
 		Elf_Addr         tmp;
-		unsigned long    symnum;
+		unsigned long    symnum = 0;
 
 		where = (Elf_Addr *)(obj->relocbase + rela->r_offset);
 
 		switch (ELF_R_TYPE(rela->r_info)) {
+		case R_TYPE(PC32):	/* word32 S + A - P */
 		case R_TYPE(32):	/* word32 S + A */
 		case R_TYPE(GLOB_DAT):	/* word32 S + A */
 			symnum = ELF_R_SYM(rela->r_info);
@@ -112,6 +113,43 @@ _rtld_relocate_nonplt_objects(Obj_Entry *obj)
 
 		switch (ELF_R_TYPE(rela->r_info)) {
 		case R_TYPE(NONE):
+			break;
+
+		case R_TYPE(PC32):	/* word32 S + A - P */
+			/*
+			 * VAX PC-relative displacement: the CPU adds
+			 * the displacement to the PC, which has already
+			 * advanced past the 4-byte displacement field.
+			 * So: effective_addr = (where + 4) + *where.
+			 * We need *where = target - (where + 4).
+			 *
+			 * The VAX BFD linker bakes the link-time symbol
+			 * value into rela->r_addend (unlike m68k which
+			 * stores only the original addend).  Subtract
+			 * the referencing object's symbol value to
+			 * recover the original addend.
+			 *
+			 * For weak undefined symbols resolved to
+			 * _rtld_sym_zero, the runtime address is 0.
+			 */
+		    {
+			Elf_Addr target;
+
+			if (def == &_rtld_sym_zero)
+				target = 0;
+			else
+				target = (Elf_Addr)(defobj->relocbase +
+				    def->st_value);
+			tmp = target + rela->r_addend -
+			    obj->symtab[symnum].st_value -
+			    (Elf_Addr)where - 4;
+
+			if (*where != tmp)
+				*where = tmp;
+			rdbg(("PC32 %s in %s --> %p in %s",
+			    obj->strtab + obj->symtab[symnum].st_name,
+			    obj->path, (void *)target, defobj->path));
+		    }
 			break;
 
 		case R_TYPE(32):	/* word32 S + A */
