@@ -48,7 +48,16 @@
 #    define	cat3t(a,b,c) cat3(a,c,b)
 #  endif
 
-#  define vccast(name) (cat3(__,name,x).d)
+/*
+ * Clang's constant folder interprets union byte patterns as IEEE 754,
+ * destroying D_float constants at -O2.  The volatile cast forces a
+ * runtime load from the correct raw bytes stored in .rodata.
+ */
+#  ifdef __clang__
+#    define vccast(name) (*(const volatile double *)&cat3(__,name,x))
+#  else
+#    define vccast(name) (cat3(__,name,x).d)
+#  endif
 
    /*
     * Define a constant to high precision on a Vax or Tahoe.
