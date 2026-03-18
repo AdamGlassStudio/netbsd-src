@@ -86,7 +86,7 @@ static __inline void *
 __lwp_getprivate_fast(void)
 {
 	register void *tcb __asm("r0");
-	__asm("chmk %0" :: "i"(SYS__lwp_getprivate) : "r0");
+	__asm volatile("chmk %1" : "=r"(tcb) : "i"(SYS__lwp_getprivate));
 	return tcb;
 }
 __END_DECLS
