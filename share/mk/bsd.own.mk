@@ -1009,8 +1009,14 @@ MKGDB.ia64=	no
 # On VAX using ELF, all objects are PIC, not just shared libraries,
 # so don't build the _pic version. VAX has no native TLS support either,
 # so differences between TLS models are not relevant.
+# Exception: Clang/LLVM does not use GAS -k, so PIC objects differ from
+# non-PIC and we need separate _pic builds.
 #
+.if ${HAVE_LLVM:Uno} == "yes"
+MKPICLIB.vax=	yes
+.else
 MKPICLIB.vax=	no
+.endif
 
 #
 # Location of the file that contains the major and minor numbers of the
