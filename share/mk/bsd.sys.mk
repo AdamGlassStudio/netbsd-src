@@ -179,6 +179,36 @@ LIBCSANITIZERFLAGS=	# empty
 
 CWARNFLAGS+=	${CWARNFLAGS.${ACTIVE_CC}}
 
+# Clang is stricter than GCC in many areas. Suppress warnings that the
+# NetBSD tree triggers with -Werror under Clang but not GCC.
+# TODO: move these to per-file COPTS / per-directory NOCLANGERROR
+.if ${ACTIVE_CC} == "clang"
+CWARNFLAGS.clang+=	-Wno-unknown-warning-option
+CWARNFLAGS.clang+=	-Wno-error=unused-command-line-argument
+CWARNFLAGS.clang+=	-Wno-error=macro-redefined
+CWARNFLAGS.clang+=	-Wno-error=null-pointer-subtraction
+CWARNFLAGS.clang+=	-Wno-error=unterminated-string-initialization
+CWARNFLAGS.clang+=	-Wno-error=uninitialized
+CWARNFLAGS.clang+=	-Wno-error=unused-but-set-variable
+CWARNFLAGS.clang+=	-Wno-error=unsupported-floating-point-opt
+CWARNFLAGS.clang+=	-Wno-error=atomic-alignment
+CWARNFLAGS.clang+=	-Wno-error=deprecated-non-prototype
+CWARNFLAGS.clang+=	-Wno-error=cast-function-type-mismatch
+CWARNFLAGS.clang+=	-Wno-error=strict-prototypes
+CWARNFLAGS.clang+=	-Wno-error=alloc-size
+CWARNFLAGS.clang+=	-Wno-error=array-parameter
+CWARNFLAGS.clang+=	-Wno-error=missing-format-attribute
+CWARNFLAGS.clang+=	-Wno-error=tautological-compare
+CWARNFLAGS.clang+=	-Wno-error=default-const-init-var-unsafe
+CWARNFLAGS.clang+=	-Wno-error=format-truncation
+CWARNFLAGS.clang+=	-Wno-error=vla-cxx-extension
+CWARNFLAGS.clang+=	-Wno-error=array-compare
+CWARNFLAGS.clang+=	-Wno-error=incompatible-pointer-types
+CWARNFLAGS.clang+=	-Wno-error=fortify-source
+CWARNFLAGS.clang+=	-Wno-error=unused-but-set-parameter
+CWARNFLAGS.clang+=	-Wno-error=single-bit-bitfield-constant-conversion
+.endif
+
 CPPFLAGS+=	${AUDIT:D-D__AUDIT__}
 _NOWERROR=	${defined(NOGCCERROR) || (${ACTIVE_CC} == "clang" && defined(NOCLANGERROR)):?yes:no}
 CFLAGS+=	${${_NOWERROR} == "no" :?-Werror:} ${CWARNFLAGS}
@@ -211,6 +241,12 @@ COPTS+=	-Wno-error=stack-protector
 
 COPTS+=	${${ACTIVE_CC} == "clang":? --param ssp-buffer-size=1 :}
 COPTS+=	${${ACTIVE_CC} == "gcc":? --param ssp-buffer-size=1 :}
+
+# VAX + Clang: stack protector is not supported (no TLS for
+# __stack_chk_guard), disable entirely.
+.	if "${ACTIVE_CC}" == "clang" && ${MACHINE_ARCH} == "vax"
+COPTS+=	-fno-stack-protector
+.	endif
 .   endif
 .endif
 
