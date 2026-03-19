@@ -14,7 +14,13 @@ SUBDIR=	adventure arithmetic atc \
 	hack hals_end hangman hunt larn mille monop morse number \
 	phantasia pig pom ppt primes quiz \
 	rain random robots rogue sail snake testpat tetris trek \
-	wargames warp worm worms wtf wump
+	wargames worm worms wtf wump
+
+# XXX warp uses inline asm with a.out symbol names (_gfillen etc.)
+# that don't work on ELF. Skip until fixed.
+.if ${ACTIVE_CC} != "clang"
+SUBDIR+=	warp
+.endif
 
 .if ${MKCXX} != "no"
 SUBDIR+=	dab 
