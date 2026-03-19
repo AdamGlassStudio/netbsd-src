@@ -168,7 +168,7 @@ RUMPCOMP_USER_WARNFLAGS+=	-Wstrict-prototypes -Wmissing-prototypes
 .if empty(DESTDIR)
 DESTDIR=/
 .endif
-BUILDRUMP_CPPFLAGS ?= -isysroot ${DESTDIR}
+BUILDRUMP_CPPFLAGS ?= --sysroot=${DESTDIR}
 RUMPCOMP_USER_WERROR = ${${_NOWERROR} == "no" :?-Werror:}
 .for rcusrc in ${RUMPCOMP_USER_SRCS:R}
 ${rcusrc}.d: ${rcusrc}.c
