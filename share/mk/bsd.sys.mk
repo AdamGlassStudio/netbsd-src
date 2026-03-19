@@ -95,13 +95,12 @@ LDFLAGS+=	-Wl,--fatal-warnings
 
 LDFLAGS+=	-Wl,--warn-shared-textrel
 
-# VAX: suppress fatal linker warnings and eh-frame-hdr — VAX has no
-# GOT/PLT support, so shared libraries have text relocations.  This
-# must apply regardless of ACTIVE_CC because GCC-compiled libraries
-# (e.g. libobjc) still link against a Clang-built destdir (crtbeginS.o).
+# VAX: suppress fatal linker warnings — VAX shared libraries have text
+# relocations due to limited PIC support.  This must apply regardless of
+# ACTIVE_CC because GCC-compiled libraries (e.g. libobjc) still link
+# against a Clang-built destdir (crtbeginS.o).
 .if ${MACHINE_ARCH} == "vax"
 LDFLAGS+=	-Wl,--no-fatal-warnings
-LDFLAGS+=	-Wl,--no-eh-frame-hdr
 .endif
 
 .if ${WARNS} > 1
