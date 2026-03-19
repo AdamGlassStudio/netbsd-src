@@ -106,6 +106,14 @@ LDFLAGS+=	-Wl,--fatal-warnings
 
 LDFLAGS+=	-Wl,--warn-shared-textrel
 
+# VAX: suppress fatal linker warnings — VAX shared libraries have text
+# relocations due to limited PIC support.  This must apply regardless of
+# ACTIVE_CC because GCC-compiled libraries (e.g. libobjc) still link
+# against a Clang-built destdir (crtbeginS.o).
+.if ${MACHINE_ARCH} == "vax"
+LDFLAGS+=	-Wl,--no-fatal-warnings
+.endif
+
 .if ${WARNS} > 1
 CFLAGS+=	-Wreturn-type -Wswitch -Wshadow
 .endif
