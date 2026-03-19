@@ -1739,6 +1739,7 @@ _NEEDS_LIBCXX.powerpc=		yes
 _NEEDS_LIBCXX.powerpc64=	yes
 _NEEDS_LIBCXX.sparc=		yes
 _NEEDS_LIBCXX.sparc64=		yes
+_NEEDS_LIBCXX.vax=		yes
 _NEEDS_LIBCXX.x86_64=		yes
 
 .if ${MKLLVM} == "yes" && ${_NEEDS_LIBCXX.${MACHINE_ARCH}:Uno} == "yes"

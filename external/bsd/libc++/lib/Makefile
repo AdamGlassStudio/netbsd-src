@@ -50,6 +50,7 @@ CWARNFLAGS.clang+=	-Wno-error=unused-variable -Wno-error=missing-noreturn
 CWARNFLAGS.clang+=	-Wno-error=missing-prototypes -Wno-error=sometimes-uninitialized
 CWARNFLAGS.clang+=	-Wno-error=missing-field-initializers -Wno-error=switch
 CWARNFLAGS.clang+=	-Wno-error=implicit-exception-spec-mismatch -Wno-error=format-nonliteral -Wno-error=format-security
+CWARNFLAGS.clang+=	-Wno-error=unqualified-std-cast-call
 
 .if ${MKSANITIZER} != "yes"
 LDFLAGS+=	-Wl,-z,defs
