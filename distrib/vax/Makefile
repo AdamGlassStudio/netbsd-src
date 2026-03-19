@@ -6,12 +6,10 @@
 SUBDIR=		ramdisk .WAIT ramdisk-kernel .WAIT floppy cdroms liveimage
 TARGETS+=	release
 
-release: check_RELEASEDIR .WAIT ${DESTDIR}/usr/mdec/boot \
-                                ${DESTDIR}/usr/mdec/boot.mop
+release: check_RELEASEDIR .WAIT ${DESTDIR}/usr/mdec/boot
 	${RELEASE_INSTALL} ${DESTDIR}/usr/mdec/boot \
 	    ${RELEASEDIR}/${RELEASEMACHINEDIR}/installation/netboot
-	${RELEASE_INSTALL} ${DESTDIR}/usr/mdec/boot.mop \
-	    ${RELEASEDIR}/${RELEASEMACHINEDIR}/installation/netboot
+# XXX boot.mop skipped — mopcopy crashes on Clang-compiled boot ELF
 
 iso_image: .MAKE
 	${MAKEDIRTARGET} cdroms iso_image

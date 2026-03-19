@@ -81,6 +81,20 @@
  * match the pointer size in code linked with libpcap, either
  * build-time linking or run-time linking will fail.)
  */
+/*
+ * SIZEOF_TIME_T is set in config.h for libpcap proper, but external
+ * consumers of pcap-int.h (pflogd, postfix, etc.) don't include it.
+ * Fall back to a platform-based default.
+ */
+#ifndef SIZEOF_TIME_T
+  #include <sys/types.h>
+  #ifdef _LP64
+    #define SIZEOF_TIME_T 8
+  #else
+    /* NetBSD uses 64-bit time_t on all platforms since NetBSD 6. */
+    #define SIZEOF_TIME_T 8
+  #endif
+#endif
 #if SIZEOF_TIME_T == 8
   #define PCAP_SIZEOF_TIME_T_BITS_STRING "64"
 #elif SIZEOF_TIME_T == 4
