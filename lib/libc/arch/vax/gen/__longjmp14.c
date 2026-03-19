@@ -58,7 +58,7 @@ __longjmp14(jmp_buf env, int val)
 
 	/* Ensure non-zero return value */
 	if (val == 0)
-		val = -1;
+		val = 1;
 
 	/* Set _UC_SIGMASK and _UC_CPU */
 	uc.uc_flags = _UC_SIGMASK | _UC_CPU;
