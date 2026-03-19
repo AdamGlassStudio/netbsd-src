@@ -193,6 +193,8 @@ CWARNFLAGS.clang+=	-Wno-error=vla-cxx-extension
 CWARNFLAGS.clang+=	-Wno-error=array-compare
 CWARNFLAGS.clang+=	-Wno-error=incompatible-pointer-types
 CWARNFLAGS.clang+=	-Wno-error=fortify-source
+CWARNFLAGS.clang+=	-Wno-error=unused-but-set-parameter
+CWARNFLAGS.clang+=	-Wno-error=single-bit-bitfield-constant-conversion
 .endif
 
 CPPFLAGS+=	${AUDIT:D-D__AUDIT__}
