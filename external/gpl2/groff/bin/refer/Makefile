@@ -11,6 +11,8 @@ NOLIBDRIVER=
 PROG_CXX=	refer
 SRCS=		label.cpp command.cpp ref.cpp refer.cpp token.cpp
 CFLAGS+=	-I${DIST_DIR}
+# Clang: ref.cpp compares arrays with ==.
+COPTS.ref.cpp+=	${${ACTIVE_CC} == "clang":? -Wno-error=array-compare :}
 DPADD+=		${LIBBIB}
 LDADD+=		${LIBBIB}
 CLEANFILES+=	${MAN}

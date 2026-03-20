@@ -25,6 +25,10 @@ SRCS+=	div.c ldiv.c imaxdiv.c
 # This might be replaced by erand48.c
 SRCS+= erand48_ieee754.c
 
+# Clang: null pointer arithmetic in merge sort and quicksort macros.
+COPTS.merge.c+=	${${ACTIVE_CC} == "clang":? -Wno-error=null-pointer-subtraction :}
+COPTS.qsort.c+=	${${ACTIVE_CC} == "clang":? -Wno-error=null-pointer-subtraction :}
+
 .if ${RUMPRUN} != "yes"
 .   if (${USE_JEMALLOC} != "no")
 .      if ${HAVE_JEMALLOC} > 100

@@ -142,6 +142,7 @@ COPTS.umac.c+=		-Wno-error=deprecated-declarations
 COPTS.umac128.c+=	-Wno-error=deprecated-declarations
 COPTS.ssherr-libcrypto.c+=	-Wno-error=deprecated-declarations
 COPTS.kexmlkem768x25519.c+=${${ACTIVE_CC} == "clang":? -Wno-error=missing-noreturn:}
+COPTS.log.c+=		${${ACTIVE_CC} == "clang":? -Wno-error=missing-format-attribute :}
 
 
 
