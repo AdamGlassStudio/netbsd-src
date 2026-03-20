@@ -29,7 +29,8 @@ TESTS_SUBDIRS+=	time
 TESTS_SUBDIRS+=	tls
 TESTS_SUBDIRS+=	ttyio
 
-.if ${HAVE_SSP} == "yes"
+# VAX/Clang: LLVM backend does not yet support stack guard lowering.
+.if ${HAVE_SSP} == "yes" && !(${MACHINE_ARCH} == "vax" && ${ACTIVE_CC} == "clang")
 TESTS_SUBDIRS+=	ssp
 .endif
 
