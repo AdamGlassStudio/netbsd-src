@@ -179,34 +179,23 @@ LIBCSANITIZERFLAGS=	# empty
 
 CWARNFLAGS+=	${CWARNFLAGS.${ACTIVE_CC}}
 
-# Clang is stricter than GCC in many areas. Suppress warnings that the
-# NetBSD tree triggers with -Werror under Clang but not GCC.
-# TODO: move these to per-file COPTS / per-directory NOCLANGERROR
+# Clang/VAX: warning suppressions for -Werror compatibility.
+# Silently ignore warning flags unknown to older Clang (e.g. upstream's
+# Clang 18 vs our Clang 23).  -Wno-unknown-warning-option has existed
+# since Clang 3.2 (Dec 2012).
 .if ${ACTIVE_CC} == "clang"
 CWARNFLAGS.clang+=	-Wno-unknown-warning-option
 CWARNFLAGS.clang+=	-Wno-error=unused-command-line-argument
+# sys/sys/stdarg.h redefines Clang's built-in va_start/va_arg macros.
 CWARNFLAGS.clang+=	-Wno-error=macro-redefined
-CWARNFLAGS.clang+=	-Wno-error=null-pointer-subtraction
-CWARNFLAGS.clang+=	-Wno-error=unterminated-string-initialization
-CWARNFLAGS.clang+=	-Wno-error=uninitialized
-CWARNFLAGS.clang+=	-Wno-error=unused-but-set-variable
-CWARNFLAGS.clang+=	-Wno-error=unsupported-floating-point-opt
-CWARNFLAGS.clang+=	-Wno-error=atomic-alignment
+# Widespread Clang-vs-GCC strictness differences (100+ files each).
+# These are systemic and must be fixed in the source before removing.
+# Per-file COPTS would touch hundreds of Makefiles.
 CWARNFLAGS.clang+=	-Wno-error=deprecated-non-prototype
-CWARNFLAGS.clang+=	-Wno-error=cast-function-type-mismatch
 CWARNFLAGS.clang+=	-Wno-error=strict-prototypes
-CWARNFLAGS.clang+=	-Wno-error=alloc-size
-CWARNFLAGS.clang+=	-Wno-error=array-parameter
-CWARNFLAGS.clang+=	-Wno-error=missing-format-attribute
-CWARNFLAGS.clang+=	-Wno-error=tautological-compare
-CWARNFLAGS.clang+=	-Wno-error=default-const-init-var-unsafe
-CWARNFLAGS.clang+=	-Wno-error=format-truncation
-CWARNFLAGS.clang+=	-Wno-error=vla-cxx-extension
-CWARNFLAGS.clang+=	-Wno-error=array-compare
-CWARNFLAGS.clang+=	-Wno-error=incompatible-pointer-types
-CWARNFLAGS.clang+=	-Wno-error=fortify-source
-CWARNFLAGS.clang+=	-Wno-error=unused-but-set-parameter
-CWARNFLAGS.clang+=	-Wno-error=single-bit-bitfield-constant-conversion
+CWARNFLAGS.clang+=	-Wno-error=unused-but-set-variable
+CWARNFLAGS.clang+=	-Wno-error=cast-function-type-mismatch
+CWARNFLAGS.clang+=	-Wno-error=unterminated-string-initialization
 .endif
 
 CPPFLAGS+=	${AUDIT:D-D__AUDIT__}

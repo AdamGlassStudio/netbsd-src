@@ -96,10 +96,6 @@ CWARNFLAGS+=	-Wno-sign-compare
 
 CWARNFLAGS.clang+=	-Wno-unknown-pragmas -Wno-conversion \
 			-Wno-self-assign \
-			-Wno-error=constant-conversion \
-			-Wno-error=format-security \
-			-Wno-error=unused-function \
-			-Wno-error=null-dereference \
 			-Wno-error=unused-command-line-argument
 CWARNFLAGS+=		${CC_WNO_ADDRESS_OF_PACKED_MEMBER}
 
@@ -107,6 +103,12 @@ CWARNFLAGS.ah_regdomain.c= ${${ACTIVE_CC} == "clang":? \
     -Wno-shift-count-negative -Wno-shift-count-overflow:}
 
 CWARNFLAGS.ioconf.c= ${${ACTIVE_CC} == "clang":? -Wno-unused-const-variable :}
+
+# Per-file Clang warning suppressions (moved from global CWARNFLAGS.clang).
+CWARNFLAGS.bi.c= ${${ACTIVE_CC} == "clang":? -Wno-error=format-security :}
+CWARNFLAGS.mscp_subr.c= ${${ACTIVE_CC} == "clang":? -Wno-error=unused-function :}
+CWARNFLAGS.pmap.c= ${${ACTIVE_CC} == "clang":? -Wno-error=null-dereference :}
+CWARNFLAGS.db_machdep.c= ${${ACTIVE_CC} == "clang":? -Wno-error=uninitialized :}
 
 CFLAGS+=	-ffreestanding -fno-zero-initialized-in-bss
 CFLAGS+=	-fno-delete-null-pointer-checks

@@ -8,5 +8,6 @@ BINGRP= authpf
 BINMODE= 6555
 SRCS=	authpf.c
 CFLAGS+= -Wall
+COPTS.authpf.c+=	${${ACTIVE_CC} == "clang":? -Wno-error=fortify-source :}
 
 .include <bsd.prog.mk>

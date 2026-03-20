@@ -32,5 +32,6 @@ signal.c
 COPTS.bufferevent_filter.c +=	${CC_WNO_IMPLICIT_FALLTHROUGH}
 COPTS.evdns.c +=		${CC_WNO_IMPLICIT_FALLTHROUGH}
 COPTS.event.c +=		${CC_WNO_IMPLICIT_FALLTHROUGH}
+COPTS.http.c +=			${${ACTIVE_CC} == "clang":? -Wno-error=tautological-compare :}
 
 .include <bsd.lib.mk>
