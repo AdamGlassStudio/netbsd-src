@@ -90,6 +90,9 @@ SRCS+=		tls.c
 SRCS+=		xmalloc.c
 SRCS+=		xprintf.c
 
+# Clang: null pointer arithmetic in xmalloc.
+COPTS.xmalloc.c+=	${${ACTIVE_CC} == "clang":? -Wno-error=null-pointer-subtraction :}
+
 .if ${USE_FORT} == "yes"
 .PATH.c: ${NETBSDSRCDIR}/lib/libc/misc
 SRCS+=		stack_protector.c
