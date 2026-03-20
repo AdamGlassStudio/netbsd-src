@@ -36,7 +36,7 @@
 
 #define REGSIZE 4
 #define BUFSIZE (NEXECREGS * REGSIZE)
-#define SLOT(n)	(n)*REGSIZE(%sp)
+#define SLOT(n)	(n*REGSIZE)(%sp)
 
 ENTRY(execregs_start, 0)
 	/* store registers to a buffer on stack */

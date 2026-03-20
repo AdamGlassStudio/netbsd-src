@@ -21,7 +21,13 @@ TESTS_C+=	t_dir
 TESTS_C+=	t_floatunditf
 TESTS_C+=	t_fmtcheck
 TESTS_C+=	t_fnmatch
+# t_fpclassify assumes IEEE 754 (NaN, Inf) — skip on VAX (D_float).
+# Clang's __float_infinity_nan.h unconditionally defines NAN even on non-IEEE
+# targets, causing the test to compile code paths that reference functions
+# only defined under _FLOAT_IEEE754.
+.if ${MACHINE_ARCH} != "vax"
 TESTS_C+=	t_fpclassify
+.endif
 TESTS_C+=	t_fpsetmask
 TESTS_C+=	t_fpsetround
 TESTS_C+=	t_ftok

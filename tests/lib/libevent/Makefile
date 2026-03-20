@@ -28,5 +28,7 @@ LDADD+=		-levent_pthreads -levent -lz -lpthread
 
 COPTS.regress_rpc.c+=	${CC_WNO_CAST_FUNCTION_TYPE}
 COPTS.regress_dns.c+=	${CC_WNO_MAYBE_UNINITIALIZED}
+# Clang: one-bit signed bitfield assigned 1 (becomes -1).
+COPTS.regress_http.c+=	${${ACTIVE_CC} == "clang":? -Wno-error=single-bit-bitfield-constant-conversion :}
 
 .include <bsd.test.mk>
