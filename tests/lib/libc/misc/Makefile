@@ -39,6 +39,7 @@ COPTS.ubsan.c+=    ${${ACTIVE_CC} == "clang" && ${MACHINE_ARCH} == "powerpc":? -
 
 COPTS.t_ubsan.c+=	${${ACTIVE_CC} == "gcc" && ${HAVE_GCC:U0} >= 7:? -Wno-int-in-bool-context :}
 COPTS.t_ubsanxx.cpp+=	${${ACTIVE_CC} == "gcc" && ${HAVE_GCC:U0} >= 7:? -Wno-int-in-bool-context :}
+COPTS.t_ubsanxx.cpp+=	${${ACTIVE_CC} == "clang":? -Wno-error=vla-cxx-extension :}
 COPTS.t_ubsan.c+=	${${ACTIVE_CC} == "gcc" && ${HAVE_GCC:U0} >= 12:? -Wno-uninitialized :}
 COPTS.t_ubsanxx.cpp+=	${${ACTIVE_CC} == "gcc" && ${HAVE_GCC:U0} >= 12:? -Wno-uninitialized :}
 

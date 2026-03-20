@@ -48,11 +48,16 @@ TESTS_C+=	t_sinh
 TESTS_C+=	t_sqrt
 TESTS_C+=	t_tan
 TESTS_C+=	t_tanh
+# t_cabsl uses C++ <complex> which requires IEEE 754 NaN support.
+.if ${MACHINE_ARCH} != "vax"
 TESTS_CXX+=	t_cabsl
-
 SRCS.t_cabsl=	t_cabsl.cxx
+.endif
 
 LDADD+=		-lm
 #COPTS+=	-Wfloat-equal
+
+# Clang: precision loss in IEEE 754 test constants (harmless for test correctness).
+COPTS.t_hypot.c+=	${${ACTIVE_CC} == "clang":? -Wno-error=implicit-const-int-float-conversion :}
 
 .include <bsd.test.mk>
