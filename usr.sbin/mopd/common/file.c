@@ -458,7 +458,8 @@ GetElfFileInfo(struct dllist *dl)
 	Elf32_Phdr phdr;
 	uint32_t e_machine, e_entry;
 	uint32_t e_phoff, e_phentsize, e_phnum;
-	int ei_data, i;
+	uint32_t p_type;
+	int ei_data, i, nsec;
 
 	(void)lseek(dl->ldfd, (off_t) 0, SEEK_SET);
 
@@ -526,8 +527,8 @@ GetElfFileInfo(struct dllist *dl)
 
 	if (e_phnum > SEC_MAX)
 		return(-1);
-	dl->e_nsec = e_phnum;
-	for (i = 0; i < dl->e_nsec; i++) {
+	nsec = 0;
+	for (i = 0; i < (int)e_phnum; i++) {
 		if (lseek(dl->ldfd, (off_t) e_phoff + (i * e_phentsize),
 		    SEEK_SET) == (off_t) -1)
 			return(-1);
@@ -537,38 +538,58 @@ GetElfFileInfo(struct dllist *dl)
 
 		switch (ei_data) {
 		case ELFDATA2LSB:
-			dl->e_sections[i].s_foff =
+			p_type = mopFileGetLX((u_char *) &phdr,
+			    offsetof(Elf32_Phdr, p_type),
+			    sizeof(phdr.p_type));
+			break;
+		case ELFDATA2MSB:
+			p_type = mopFileGetBX((u_char *) &phdr,
+			    offsetof(Elf32_Phdr, p_type),
+			    sizeof(phdr.p_type));
+			break;
+		default:
+			return(-1);
+		}
+
+		if (p_type != PT_LOAD)
+			continue;
+		if (nsec >= SEC_MAX)
+			return(-1);
+
+		switch (ei_data) {
+		case ELFDATA2LSB:
+			dl->e_sections[nsec].s_foff =
 			    mopFileGetLX((u_char *) &phdr,
 			    offsetof(Elf32_Phdr, p_offset),
 			    sizeof(phdr.p_offset));
-			dl->e_sections[i].s_vaddr =
+			dl->e_sections[nsec].s_vaddr =
 			    mopFileGetLX((u_char *) &phdr,
 			    offsetof(Elf32_Phdr, p_vaddr),
 			    sizeof(phdr.p_vaddr));
-			dl->e_sections[i].s_fsize =
+			dl->e_sections[nsec].s_fsize =
 			    mopFileGetLX((u_char *) &phdr,
 			    offsetof(Elf32_Phdr, p_filesz),
 			    sizeof(phdr.p_filesz));
-			dl->e_sections[i].s_msize =
+			dl->e_sections[nsec].s_msize =
 			    mopFileGetLX((u_char *) &phdr,
 			    offsetof(Elf32_Phdr, p_memsz),
 			    sizeof(phdr.p_memsz));
 			break;
 
 		case ELFDATA2MSB:
-			dl->e_sections[i].s_foff =
+			dl->e_sections[nsec].s_foff =
 			    mopFileGetBX((u_char *) &phdr,
 			    offsetof(Elf32_Phdr, p_offset),
 			    sizeof(phdr.p_offset));
-			dl->e_sections[i].s_vaddr =
+			dl->e_sections[nsec].s_vaddr =
 			    mopFileGetBX((u_char *) &phdr,
 			    offsetof(Elf32_Phdr, p_vaddr),
 			    sizeof(phdr.p_vaddr));
-			dl->e_sections[i].s_fsize =
+			dl->e_sections[nsec].s_fsize =
 			    mopFileGetBX((u_char *) &phdr,
 			    offsetof(Elf32_Phdr, p_filesz),
 			    sizeof(phdr.p_filesz));
-			dl->e_sections[i].s_msize =
+			dl->e_sections[nsec].s_msize =
 			    mopFileGetBX((u_char *) &phdr,
 			    offsetof(Elf32_Phdr, p_memsz),
 			    sizeof(phdr.p_memsz));
@@ -577,7 +598,9 @@ GetElfFileInfo(struct dllist *dl)
 		default:
 			return(-1);
 		}
+		nsec++;
 	}
+	dl->e_nsec = nsec;
 	/*
 	 * In addition to padding between segments, this also
 	 * takes care of memsz > filesz.
