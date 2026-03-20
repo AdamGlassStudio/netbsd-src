@@ -167,6 +167,7 @@ CPPFLAGS.t_subr_prf.c=	-Wno-pointer-sign	# XXX platform vs kernel SHA2
 
 # Test explicitly tests failure modes.
 CPPFLAGS.t_subr_prf.c+=	${CC_WNO_FORMAT_TRUNCATION}
+COPTS.t_subr_prf.c+=	${${ACTIVE_CC} == "clang":? -Wno-error=format-truncation :}
 
 SANITIZER_RENAME_CLASSES+=		t_subr_prf
 SANITIZER_RENAME_FILES.t_subr_prf+=	t_subr_prf.c

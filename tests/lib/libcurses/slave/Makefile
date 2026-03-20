@@ -15,6 +15,7 @@ CPPFLAGS+=	-I${.CURDIR} -I. -I${.CURDIR}/../director
 LDADD+=		-lcurses -lterminfo -Wl,--no-fatal-warnings
 
 COPTS.curses_commands.c += -Wno-format-nonliteral
+COPTS.curses_commands.c += ${${ACTIVE_CC} == "clang":? -Wno-error=unused-but-set-parameter :}
 CWARNFLAGS.clang+=	-Wno-format
 
 .include <bsd.test.mk>

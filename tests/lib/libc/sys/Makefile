@@ -49,7 +49,10 @@ TESTS_C+=		t_mkfifo
 TESTS_C+=		t_mknod
 TESTS_C+=		t_mlock
 TESTS_C+=		t_mmap
+# VAX has no instruction cache; __builtin___clear_cache lowering is unavailable.
+.if ${MACHINE_ARCH} != "vax"
 TESTS_C+=		t_mprotect
+.endif
 TESTS_C+=		t_msgctl
 TESTS_C+=		t_msgget
 TESTS_C+=		t_msgrcv
@@ -98,7 +101,9 @@ TESTS_C+=		t_wait_noproc
 TESTS_C+=		t_wait_noproc_wnohang
 TESTS_C+=		t_write
 
+.if ${MACHINE_ARCH} != "vax"
 SRCS.t_mprotect=	t_mprotect.c ${SRCS_EXEC_PROT} t_mprotect_helper.c
+.endif
 
 LDADD.t_aio_cancel+=	-lrt -lpthread
 LDADD.t_aio_suspend+=	-lrt -lpthread
@@ -171,5 +176,8 @@ CWARNFLAGS.gcc+=	${CC_WNO_ADDRESS_OF_PACKED_MEMBER} \
 
 # Explicitly breaks this
 COPTS.t_wait.c+=	${CC_WNO_ARRAY_BOUNDS} ${CC_WNO_STRINGOP_OVERFLOW}
+
+# Clang: test intentionally passes uninitialized struct to getitimer(2).
+COPTS.t_getitimer.c+=	${${ACTIVE_CC} == "clang":? -Wno-error=uninitialized-const-pointer :}
 
 .include <bsd.test.mk>
