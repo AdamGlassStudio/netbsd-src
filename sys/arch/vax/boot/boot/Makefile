@@ -5,10 +5,7 @@ S=	${.CURDIR}/../../../..
 .include <bsd.own.mk>
 
 PROG=	boot
-# XXX: mopcopy crashes on Clang-compiled boot binary (pad size overflow).
-# MOP netboot is optional; skip boot.mop until mopcopy is fixed.
-#PROGS=  ${PROG} ${PROG}.mop
-PROGS=  ${PROG}
+PROGS=  ${PROG} ${PROG}.mop
 DEVS=	hp.c ctu.c ra.c mfm.c if_qe.c if_le.c if_ze.c if_de.c if_ni.c
 SRCS=	srt0.S boot.c devopen.c conf.c autoconf.c netio.c rom.c romread.S \
 	consio.c consio2.S str.S ${DEVS} findcpu.c
