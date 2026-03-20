@@ -57,10 +57,6 @@ LINTFLAGS += -X 96,117,129,174,214,226,231,298
 
 CPPFLAGS+= -I${SRCDIR} -DZSTD_MULTITHREAD
 
-# Clang/VAX: divsufsort.c triggers an ISel assertion at any optimization level.
-# Compile at -O0 until the backend bug is fixed.
-COPTS.divsufsort.c+= ${${ACTIVE_CC} == "clang" && ${MACHINE_ARCH} == "vax":? -O0 :}
-
 LIBDPLIBS += pthread ${NETBSDSRCDIR}/lib/libpthread
 
 .if ${LIBISPRIVATE:Uno} == "no"
